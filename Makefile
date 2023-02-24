@@ -7,7 +7,7 @@ endif
 all: test format ts verify
 
 test:
-	TZ=UTC zig/zig test ts.zig
+	TZ=UTC zig/zig test ts.zig -lc
 
 format:
 	zig/zig fmt ts.zig
@@ -16,7 +16,7 @@ clean:
 	rm -rf ts ts.o zig-out zig-cache ts.pl
 
 zig/zig:
-	./scripts/install-zig.sh
+	./install-zig.sh
 
 verify: ts
 	yes "Sample text" 2>/dev/null | head -n 10 | ./ts -m '%.T' || true
@@ -38,5 +38,5 @@ ts.pl:
 	chmod +x $@
 
 %: %.zig zig/zig
-	./zig/zig build-exe -freference-trace -Drelease-fast ts.zig
+	./zig/zig build-exe -freference-trace -Drelease-fast -lc ts.zig
 	touch $@
