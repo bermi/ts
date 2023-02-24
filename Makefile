@@ -9,13 +9,13 @@ all: test format ts verify
 build: ts
 
 test: zig/zig
-	TZ=UTC zig/zig test ts.zig -lc
+	TZ=UTC zig/zig test src/ts.zig -lc
 
 format: zig/zig
-	zig/zig fmt ts.zig
+	zig/zig fmt src/ts.zig
 
 validate-format: zig/zig
-	zig/zig fmt ts.zig --check
+	zig/zig fmt src/ts.zig --check
 
 clean: 
 	rm -rf ts ts.o zig-out zig-cache ts.pl
@@ -27,7 +27,7 @@ verify: ts
 	yes "Sample text" 2>/dev/null | head -n 10 | ./ts -m '%.T' || true
 
 benchmark: ts.pl ts
-	echo "Benchmarking ts.zig"
+	echo "Benchmarking src/ts.zig"
 	make benchmark-ts-zig
 	echo "Benchmarking ts.pl"
 	make benchmark-ts-pl
@@ -42,6 +42,6 @@ ts.pl:
 	wget -q https://raw.githubusercontent.com/stigtsp/moreutils/master/ts -O $@
 	chmod +x $@
 
-%: %.zig zig/zig Makefile build.zig
-	./zig/zig build-exe -Drelease-safe -Dc -lc ts.zig
+%: src/%.zig zig/zig Makefile build.zig
+	./zig/zig build-exe src/ts.zig
 	touch $@
