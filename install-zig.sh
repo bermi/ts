@@ -57,9 +57,9 @@ echo "Downloading $ZIG_URL..."
 if command -v wget &> /dev/null; then
     # -4 forces `wget` to connect to ipv4 addresses, as ipv6 fails to resolve on certain distros.
     # Only A records (for ipv4) are used in DNS:
-    wget -4 --quiet --show-progress --output-document="$ZIG_TARBALL" "$ZIG_URL"
+    wget -4 --quiet --no-verbose --output-document="$ZIG_TARBALL" "$ZIG_URL"
 else
-    curl --silent --progress-bar --output "$ZIG_TARBALL" "$ZIG_URL"
+    curl --silent --output "$ZIG_TARBALL" "$ZIG_URL"
 fi
 
 # Extract and then remove the downloaded tarball:
