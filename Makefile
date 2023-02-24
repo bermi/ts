@@ -23,20 +23,20 @@ verify: ts
 
 benchmark: ts.pl ts
 	echo "Benchmarking ts.zig"
-	make performance-ts-zig
+	make benchmark-ts-zig
 	echo "Benchmarking ts.pl"
-	make performance-ts-pl
+	make benchmark-ts-pl
 
-performance-ts-zig: ts
+benchmark-ts-zig: ts
 	yes "Sample text" 2>/dev/null | head -n 3000000 | ./ts -m '%.T' | pv -l >/dev/null || true
 
-performance-ts-pl: ts.pl
+benchmark-ts-pl: ts.pl
 	yes "Sample text" 2>/dev/null | head -n 3000000 | ./ts.pl -m '%.T' | pv -l >/dev/null || true
 
 ts.pl:
 	wget -q https://raw.githubusercontent.com/stigtsp/moreutils/master/ts -O $@
 	chmod +x $@
 
-%: %.zig zig/zig
-	./zig/zig build-exe -freference-trace -Drelease-fast -lc ts.zig
+%: %.zig zig/zig Makefile
+	./zig/zig build-exe -Dcpu=baseline -Drelease-safe -Dc -lc ts.zig
 	touch $@

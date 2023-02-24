@@ -2,7 +2,7 @@
 
 `ts` adds a timestamp to the beginning of each line of input.
 
-This is a partial port of moreutils ts to zig optimized for high throughput. It is between 10 and 20 times faster than the perl version.
+This is a partial port of moreutils ts to zig optimized for high throughput. It is between 10 to 20 times faster than the perl version.
 
 ## Usage
 
@@ -39,7 +39,7 @@ On a 2019 MacBook Pro, `ts` is 10x faster than the perl version.
 ## Development
 
 Internally, `ts` uses C date and time functions from the C standard library
-`time.h`.
+[]`time.h`](https://pubs.opengroup.org/onlinepubs/9699919799/basedefs/time.h.html).
 
 We use zig 0.11.0. Running `./install-zig.sh` will download the zig 0.11.0
 release and install it to ./zig/
