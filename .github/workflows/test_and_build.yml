@@ -1,0 +1,59 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - 'main'
+  # Run CI for any PRs that target 'main' when they are opened or updated.
+  pull_request:
+    branches:
+      - 'main'
+    types:
+      - opened
+      - synchronize
+
+env:
+  IMAGE_NAME: ${{ github.repository }}
+
+jobs:
+  test_format:
+    name: Run zig fmt
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - run: make validate-format
+
+  test_on_linux:
+    name: Run tests on Ubuntu
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - run: make test
+
+  test_on_macos:
+    name: Run tests on macOS
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v2
+      - run: make test
+
+  benchmark_on_linux:
+    name: Run benchmark on Ubuntu
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - run: make benchmark
+
+  benchmark_on_macos:
+    name: Run benchmark on macOS
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v2
+      - run: make benchmark
+
+  # Keep this around because Github CI looks for this job of this name.
+  test:
+    runs-on: ubuntu-latest
+    needs: [test_format, test_on_linux]
+    steps:
+      - run: echo "done"

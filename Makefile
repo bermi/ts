@@ -6,11 +6,14 @@ endif
 
 all: test format ts verify
 
-test:
+test: zig/zig
 	TZ=UTC zig/zig test ts.zig -lc
 
-format:
+format: zig/zig
 	zig/zig fmt ts.zig
+
+validate-format: zig/zig
+	zig/zig fmt ts.zig --check
 
 clean: 
 	rm -rf ts ts.o zig-out zig-cache ts.pl
