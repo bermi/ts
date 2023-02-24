@@ -6,6 +6,8 @@ endif
 
 all: test format ts verify
 
+build: ts
+
 test: zig/zig
 	TZ=UTC zig/zig test ts.zig -lc
 
@@ -40,6 +42,6 @@ ts.pl:
 	wget -q https://raw.githubusercontent.com/stigtsp/moreutils/master/ts -O $@
 	chmod +x $@
 
-%: %.zig zig/zig Makefile
-	./zig/zig build-exe -Dcpu=baseline -Drelease-safe -Dc -lc ts.zig
+%: %.zig zig/zig Makefile build.zig
+	./zig/zig build-exe -Drelease-safe -Dc -lc ts.zig
 	touch $@
