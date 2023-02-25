@@ -43,5 +43,5 @@ ts.pl:
 	chmod +x $@
 
 %: src/%.zig zig/zig Makefile build.zig
-	./zig/zig build-exe src/ts.zig
+	./zig/zig build-exe -lc src/ts.zig
 	touch $@

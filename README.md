@@ -2,6 +2,8 @@
 
 `ts` adds a timestamp to the beginning of each line of input.
 
+🚧 Under development 🚧
+
 This is a partial port of moreutils ts to zig optimized for high throughput. It is between 10 to 20 times faster than the perl version.
 
 ## Usage
