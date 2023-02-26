@@ -33,15 +33,16 @@ benchmark: ts.pl ts
 	make benchmark-ts-pl
 
 benchmark-ts-zig: ts
-	time yes "Sample text" 2>/dev/null | head -n 3000000 | ./ts -m '%.T' >/dev/null || true
+	time yes "Sample text" 2>/dev/null | head -n 1000000 | ./ts -m '%.T' >/dev/null || true
 
 benchmark-ts-pl: ts.pl
-	time yes "Sample text" 2>/dev/null | head -n 3000000 | ./ts.pl -m '%.T' >/dev/null || true
+	time yes "Sample text" 2>/dev/null | head -n 1000000 | ./ts.pl -m '%.T' >/dev/null || true
 
 ts.pl:
 	wget -q https://raw.githubusercontent.com/stigtsp/moreutils/master/ts -O $@
 	chmod +x $@
 
 %: src/%.zig zig/zig Makefile build.zig
-	./zig/zig build-exe -lc src/ts.zig
+	./zig/zig build -Dcpu=baseline -Drelease-fast
+	mv zig-out/bin/$* .
 	touch $@

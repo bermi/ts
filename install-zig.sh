@@ -1,7 +1,7 @@
 #!/bin/bash
 set -eEuo pipefail
 
-ZIG_RELEASE_DEFAULT="latest"
+ZIG_RELEASE_DEFAULT="0.10.1"
 ZIG_RELEASE=${1:-$ZIG_RELEASE_DEFAULT}
 if [ "$ZIG_RELEASE" == "latest" ]; then
     ZIG_RELEASE="builds"

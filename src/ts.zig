@@ -92,7 +92,7 @@ pub fn main() !void {
     // }
 
     var tsPrefixer = TsPrefixer.init(allocator, options) catch |err| {
-        try stderr.print("ts: {any}\n", .{err});
+        try stderr.print("ts: {s}\n", .{err});
         os.exit(1);
     };
     defer tsPrefixer.deinit(allocator);
@@ -139,27 +139,27 @@ pub const Formatter = struct {
                 i += 1;
                 if (format[i] == '%') {
                     // %% is a literal %
-                    try high_res_format.append(format[i]);
+                    high_res_format.append(format[i]) catch unreachable;
                 } else if (format[i] == '.') {
                     // %.s is the high res timestamp
-                    try high_res_format.appendSlice(format[i - 1 .. i]);
-                    try high_res_format.appendSlice(format[i + 1 .. i + 2]);
-                    try high_res_format.appendSlice(HIGH_RES_TIME_PLACEHOLDER);
-                    try high_res_offsets.append(high_res_format.items.len - HIGH_RES_TIME_PLACEHOLDER.len + 1);
+                    high_res_format.appendSlice(format[i - 1 .. i]) catch unreachable;
+                    high_res_format.appendSlice(format[i + 1 .. i + 2]) catch unreachable;
+                    high_res_format.appendSlice(HIGH_RES_TIME_PLACEHOLDER) catch unreachable;
+                    high_res_offsets.append(high_res_format.items.len - HIGH_RES_TIME_PLACEHOLDER.len + 1) catch unreachable;
                     i += 1;
                 } else {
-                    try high_res_format.append(format[i]);
+                    high_res_format.append(format[i]) catch unreachable;
                 }
             } else {
                 // a is a literal a
-                try high_res_format.append(format[i]);
+                high_res_format.append(format[i]) catch unreachable;
             }
         }
 
         const uses_high_res: bool = high_res_offsets.items.len > 0;
         // Add sentinel to high_res_format
-        try high_res_format.append(0);
-        const high_res_format_slice = try high_res_format.toOwnedSlice();
+        high_res_format.append(0) catch unreachable;
+        const high_res_format_slice = high_res_format.toOwnedSlice();
 
         // Read TZ env var
         c.tzset();
@@ -172,7 +172,7 @@ pub const Formatter = struct {
         return Formatter{
             .format = format,
             .allocator = allocator,
-            .high_res_offsets = try high_res_offsets.toOwnedSlice(),
+            .high_res_offsets = high_res_offsets.toOwnedSlice(),
             .high_res_format = high_res_format_slice[0 .. high_res_format_slice.len - 1 :0],
             .uses_high_res = uses_high_res,
             .tm = tm.*,
@@ -201,7 +201,7 @@ pub const Formatter = struct {
         self.ns[4] = @intCast(u8, (ns % 100_000) / 10_000) + '0';
         self.ns[5] = @intCast(u8, (ns % 10_000) / 1_000) + '0';
         for (self.high_res_offsets) |offset| {
-            inline for (self.ns, 0..) |n, i| {
+            inline for (self.ns) |n, i| {
                 self.high_res_format[offset + i] = n;
             }
         }
@@ -321,6 +321,9 @@ pub const TsPrefixer = struct {
         var stdout_fd = std.io.getStdOut().handle;
         self.stdout_fd = stdout_fd;
 
+        // open data/small for reading
+        // var file = try std.fs.cwd().openFile("data/small", .{ });
+        // var stdin_fd = file.handle;
         var stdin_fd = std.io.getStdIn().handle;
 
         var timestamped = false;
@@ -429,12 +432,12 @@ test "Formatter.high_res_format compact" {
     try std.testing.expectEqualStrings(expected, f.high_res_format);
 }
 
-// test "Formatter.high_res_offsets" {
-//     const offsets = "% %S %.S %s %.s %T %.T % %%";
-//     var f = try Formatter.init(std.testing.allocator, offsets);
-//     defer f.deinit();
-//     try std.testing.expectEqual(.{ 8, 21, 34 }, f.high_res_offsets);
-// }
+test "Formatter.high_res_offsets" {
+    const offsets = "% %S %.S %s %.s %T %.T % %%";
+    var f = try Formatter.init(std.testing.allocator, offsets);
+    defer f.deinit();
+    try std.testing.expectEqual([_]usize{ 8, 21, 34 }, @as([3]usize, f.high_res_offsets[0..3].*));
+}
 
 test "setNs adds ns to high res format" {
     const ts: i128 = 1664291179_020_990_000;
