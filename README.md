@@ -4,6 +4,8 @@
 
 🚧 Under development 🚧
 
+This is the first code that I've written in Zig and I'm still learning what's idiomatic, what isn't. Feel free to provide feedback and I'll happily update the project and learn.
+
 This is a partial port of moreutils ts to zig optimized for high throughput. It is between 10 to 20 times faster than the perl version.
 
 ## Usage
